@@ -1,4 +1,4 @@
-package com.saum.socket;
+package com.saum.socket.server;
 
 import com.saum.config.Config;
 import com.saum.crypto.Crypto;

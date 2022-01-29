@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+
+    <!-- 定义日志文件的输出位置 -->
+    <property name="log.homeDir" value="./logs"/>
+    <!-- 定义项目名，作为日志输出位置的一项 -->
+    <property name="log.proName" value="ss-proxy"/>
+    <!-- 日志文件最大保留天数 -->
+    <property name="log.maxHistory" value="30"/>
+    <!-- 日志文件最大存储空间 -->
+    <property name="log.maxSize" value="30Mb"/>
+
+    <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <!--<pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>-->
+            <pattern>%yellow(%date{yyyy-MM-dd HH:mm:ss}) [%blue(%thread)] %highlight(%-5level) %black(%file:%line) - %black(%msg%n)</pattern>
+        </encoder>
+    </appender>
+
+    <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <encoder>
+            <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
+            <charset>utf-8</charset>
+        </encoder>
+        <file>${log.homeDir}/${log.proName}.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.FixedWindowRollingPolicy">
+            <fileNamePattern>${log.homeDir}/${log.proName}-%d{yyyy-MM-dd}.log.%i</fileNamePattern>
+        </rollingPolicy>
+        <triggeringPolicy class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">
+            <!-- 日志文件最大的大小 -->
+            <MaxFileSize>${log.maxSize}</MaxFileSize>
+        </triggeringPolicy>
+    </appender>
+
+    <root level="INFO">
+        <appender-ref ref="CONSOLE" />
+        <appender-ref ref="FILE" />
+    </root>
+</configuration>

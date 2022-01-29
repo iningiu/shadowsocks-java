@@ -1,4 +1,4 @@
-package com.saum.socket;
+package com.saum.socket.server;
 
 import com.saum.crypto.Crypto;
 import org.slf4j.Logger;

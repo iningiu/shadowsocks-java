@@ -2,8 +2,7 @@ package com.saum.config;
 
 import com.google.gson.Gson;
 import com.google.gson.stream.JsonReader;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 
 import java.io.*;
 
@@ -11,9 +10,8 @@ import java.io.*;
  * @Author saum
  * @Description:
  */
+@Slf4j
 public class ConfigLoader {
-
-    private static Logger logger = LoggerFactory.getLogger(ConfigLoader.class);
 
     public static Config loadConfig(String filePath)  {
         try(InputStream  in = new FileInputStream(filePath)) {
@@ -22,7 +20,7 @@ public class ConfigLoader {
             reader.close();
             return config;
         } catch (IOException e) {
-            logger.error("配置加载失败，{}", e);
+            log.error("配置加载失败，{}", e);
         }
         return null;
     }
