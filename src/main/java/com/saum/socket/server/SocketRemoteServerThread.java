@@ -7,7 +7,10 @@ import lombok.extern.slf4j.Slf4j;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.net.InetSocketAddress;
 import java.net.Socket;
+import java.net.SocketAddress;
+import java.net.UnknownHostException;
 import java.util.Arrays;
 
 /**
@@ -53,6 +56,8 @@ public class SocketRemoteServerThread extends Thread {
                 return;
             }
 
+            startForward();
+
         } catch (IOException e) {
             log.error("", e);
         }
@@ -88,22 +93,20 @@ public class SocketRemoteServerThread extends Thread {
 
         byte[] response = SocksConnectionResponse.responseByes();
         return encryptAllBytes(proxyOut, response);
-
     }
 
     // 远程代理转发浏览器的访问请求
     private void startForward(){
-        // 这是远程代理和目标服务器之间的socket
-        Socket remoteSocket = null;
-        OutputStream remoteOut = null;
-        InputStream remoteIn = null;
-        try {
-            remoteSocket = new Socket(remoteAddr, remotePort);
-            remoteOut = remoteSocket.getOutputStream();
-            remoteIn = remoteSocket.getInputStream();
+        try{
+            Socket remoteSocket = new Socket();
+            SocketAddress socketAddress = new InetSocketAddress(remoteAddr, remotePort);
+            remoteSocket.connect(socketAddress, 3000);
 
             remoteSocket.setSoTimeout(1000 * 60 * 10);
             remoteSocket.setKeepAlive(true);
+
+            OutputStream remoteOut = remoteSocket.getOutputStream();
+            InputStream remoteIn = remoteSocket.getInputStream();
 
             StreamForwardThread decryptThread = new StreamForwardThread(proxyIn, remoteOut, SocketRemote.crypto, false);
             StreamForwardThread encryptThread = new StreamForwardThread(remoteIn, proxyOut, SocketRemote.crypto, true);
@@ -114,27 +117,54 @@ public class SocketRemoteServerThread extends Thread {
             decryptThread.join();
             encryptThread.join();
         } catch (IOException | InterruptedException e) {
-            log.error("", e);
+            log.error("远程代理服务器访问目标地址{}:{}时出错：{}", remoteAddr, remotePort, e.getMessage(), e);
         }
 
-        // 关闭流
-        try {
-            remoteIn.close();
-            remoteOut.close();
-            remoteSocket.close();
-
-            proxyIn.close();
-            proxyOut.close();
-            proxySocket.close();
-        } catch (IOException e) {
-            log.error("", e);
-        }
+//        // 这是远程代理和目标服务器之间的socket
+//        Socket remoteSocket = null;
+//        OutputStream remoteOut = null;
+//        InputStream remoteIn = null;
+//        try {
+//            remoteSocket = new Socket(remoteAddr, remotePort);
+//            remoteOut = remoteSocket.getOutputStream();
+//            remoteIn = remoteSocket.getInputStream();
+//
+//            remoteSocket.setSoTimeout(1000 * 60 * 10);
+//            remoteSocket.setKeepAlive(true);
+//
+//            StreamForwardThread decryptThread = new StreamForwardThread(proxyIn, remoteOut, SocketRemote.crypto, false);
+//            StreamForwardThread encryptThread = new StreamForwardThread(remoteIn, proxyOut, SocketRemote.crypto, true);
+//
+//            decryptThread.start();
+//            encryptThread.start();
+//
+//            decryptThread.join();
+//            encryptThread.join();
+//        } catch (IOException | InterruptedException e) {
+//            log.error("", e);
+//        }
+//
+//        // 关闭流
+//        try {
+//            remoteIn.close();
+//            remoteOut.close();
+//            remoteSocket.close();
+//
+//            proxyIn.close();
+//            proxyOut.close();
+//            proxySocket.close();
+//        } catch (IOException e) {
+//            log.error("", e);
+//        }
     }
 
     private byte[] decryptAllBytes(InputStream in){
         try {
             byte[] buffer = new byte[SOCKS_CONNECTION_MAX + 10];
             int len = in.read(buffer);
+            if(len == -1){
+                return null;
+            }
             SocketRemote.crypto.decrypt(buffer);
             if(len == buffer.length){
                 log.warn("reach buffer limit.");

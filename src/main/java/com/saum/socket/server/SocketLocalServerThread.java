@@ -19,15 +19,13 @@ public class SocketLocalServerThread extends Thread {
 
     // 浏览器和本地代理之间的socket
     private Socket localSocket;
-
-    // 本地代理和远程代理之间的socket
-    private Socket remoteSocket;
-
     // 浏览器和本地代理之间，本地代理的输入流即浏览器的访问请求
     private final InputStream localIn;
     // 浏览器和本地代理之间，本地代理的输出流即解密后的响应数据
     private final OutputStream localOut;
 
+    // 本地代理和远程代理之间的socket
+    private Socket remoteSocket;
     // 本地代理和远程代理之间，本地代理接收来自远程代理的待解密的响应数据
     private final InputStream remoteIn;
     // 本地代理和远程代理之间，本地代理发送给远程代理加密后的访问请求
@@ -36,6 +34,7 @@ public class SocketLocalServerThread extends Thread {
     public SocketLocalServerThread(Socket localSocket, String remoteAddr, int remotePort) throws IOException {
         this.localSocket = localSocket;
         try {
+            this.remoteSocket = new Socket(remoteAddr, remotePort);
             this.remoteSocket = new Socket(remoteAddr, remotePort);
         } catch (IOException e) {
             logger.error("远程代理的IP[{}]或端口[{}]错误", remoteAddr, remotePort);
@@ -70,13 +69,13 @@ public class SocketLocalServerThread extends Thread {
             logger.error("本地代理服务端出错：{}", e);
         }
 
-        try {
-            this.localIn.close();
-            this.localOut.close();
-            this.remoteIn.close();
-            this.remoteOut.close();
-        } catch (IOException e) {
-            logger.error("本地代理服务端出错：{}", e);
-        }
+//        try {
+//            this.localIn.close();
+//            this.localOut.close();
+////            this.remoteIn.close();
+////            this.remoteOut.close();
+//        } catch (IOException e) {
+//            logger.error("本地代理服务端出错：{}", e);
+//        }
     }
 }

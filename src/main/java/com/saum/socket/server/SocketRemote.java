@@ -27,7 +27,7 @@ public class SocketRemote {
     }
 
     public void listen(){
-        log.info("rmeote server start listening...");
+        log.info("rmeote server port[{}] start listening...", config.getServerPort());
         try {
             ServerSocket serverSocket = new ServerSocket(config.getServerPort());
             while(true){

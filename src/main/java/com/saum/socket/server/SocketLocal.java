@@ -7,6 +7,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
 
@@ -28,7 +29,7 @@ public class SocketLocal {
         try {
             // 本地代理服务端
             ServerSocket localServerSocket = new ServerSocket(config.getLocalPort());
-            logger.info("local port start listening...");
+            logger.info("local server port[{}] start listening...", config.getLocalPort());
             while(true){
                 Socket socket = localServerSocket.accept();
                 logger.info("receive proxy request: 127.0.0.1:" + socket.getPort());

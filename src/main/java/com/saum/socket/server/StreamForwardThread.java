@@ -16,7 +16,7 @@ public class StreamForwardThread extends Thread {
 
     private final Logger logger = LoggerFactory.getLogger(StreamForwardThread.class);
 
-    private static final int BUFFER_SIZE = 1024 * 128; // 128k
+    private static final int BUFFER_SIZE = 1024 * 256; // 256k
     private final InputStream in;
     private final OutputStream out;
     private final Crypto crypto;
@@ -39,19 +39,21 @@ public class StreamForwardThread extends Thread {
         try {
             int len;
             if(isEncrypt){
-                while((len = in.read(buffer)) != -1){
+                while ((len = in.read(buffer)) != -1) {
+                    if (len == 0) continue;
                     crypto.encrypt(buffer);
                     out.write(buffer, 0, len);
                 }
             }else{
-                while((len = in.read(buffer)) != -1){
+                while ((len = in.read(buffer)) != -1) {
+                    if(len == 0) continue;
                     crypto.decrypt(buffer);
                     out.write(buffer, 0, len);
                 }
             }
             out.flush();
         } catch (IOException e) {
-            logger.error("本地代理服务端加解密时出错：{}", e);
+            logger.error("isEncrypt:{}, 代理服务端加解密时出错：{}", isEncrypt, e.getMessage(), e);
         }
     }
 }
