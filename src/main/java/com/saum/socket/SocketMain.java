@@ -1,12 +1,10 @@
-package com.saum;
+package com.saum.socket;
 
 import com.saum.config.Config;
 import com.saum.config.ConfigLoader;
 import com.saum.socket.server.SocketLocal;
 import com.saum.socket.server.SocketRemote;
 import lombok.extern.slf4j.Slf4j;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.Objects;
 
@@ -15,10 +13,10 @@ import java.util.Objects;
  * @Description:
  */
 @Slf4j
-public class Main {
+public class SocketMain {
 
     public static void main(String[] args) {
-        String configPath = Objects.requireNonNull(Main.class.getClassLoader().getResource("config.json")).getPath();
+        String configPath = Objects.requireNonNull(SocketMain.class.getClassLoader().getResource("config.json")).getPath();
         Config config = ConfigLoader.loadConfig(configPath);
 
         Thread t1 = new Thread(() -> {

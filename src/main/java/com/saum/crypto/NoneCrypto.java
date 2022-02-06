@@ -6,6 +6,8 @@ package com.saum.crypto;
  */
 public class NoneCrypto implements Crypto {
 
+    public static final Crypto INSTANCE = new NoneCrypto();
+
     @Override
     public byte[] encrypt(byte[] data) {
         return data;

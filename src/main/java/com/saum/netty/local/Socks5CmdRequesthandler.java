@@ -30,6 +30,7 @@ public class Socks5CmdRequesthandler extends SimpleChannelInboundHandler<Default
 
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, DefaultSocks5CommandRequest msg) throws Exception {
+        if(!msg.dstAddr().equals("www.baidu.com")) return;
         log.info("远程代理服务器：{}, {}, {}, {}", msg.type(), msg.dstAddrType().toString(), msg.dstAddr(), msg.dstPort());
         if(msg.type().equals(Socks5CommandType.CONNECT)){
             log.info("准备连接远程代理服务器");

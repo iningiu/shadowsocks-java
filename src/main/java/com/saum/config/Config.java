@@ -26,6 +26,9 @@ public class Config {
     @SerializedName("password")
     private String password;
 
+    @SerializedName("timeout")
+    private Integer timeout;
+
     public String getServer() {
         return server;
     }
@@ -72,5 +75,13 @@ public class Config {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public Integer getTimeout() {
+        return timeout;
+    }
+
+    public void setTimeout(Integer timeout) {
+        this.timeout = timeout;
     }
 }

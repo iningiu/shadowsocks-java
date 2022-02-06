@@ -20,7 +20,7 @@ public class CryptoFactory {
             case "simple":
                 return null;
             case "none":
-                return new NoneCrypto();
+                return NoneCrypto.INSTANCE;
         }
         return null;
     }

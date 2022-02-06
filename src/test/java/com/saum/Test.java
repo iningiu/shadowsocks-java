@@ -1,7 +1,14 @@
 package com.saum;
 
+import io.netty.buffer.ByteBuf;
+import io.netty.buffer.ByteBufUtil;
+import io.netty.buffer.Unpooled;
+import io.netty.util.CharsetUtil;
+
 import java.io.*;
+import java.net.InetAddress;
 import java.net.Socket;
+import java.net.UnknownHostException;
 
 /**
  * @Author saum
@@ -39,6 +46,28 @@ public class Test {
         String line = null;
         while((line = br.readLine()) != null){
             System.out.println(line);
+        }
+    }
+
+    @org.junit.Test
+    public void test3(){
+        ByteBuf buf1 = Unpooled.buffer(20);
+        ByteBuf buf2 = Unpooled.copiedBuffer("world".getBytes());
+        buf1.writeBytes("hello".getBytes());
+        buf1.writeBytes(buf2);
+        System.out.println(buf1.toString(CharsetUtil.UTF_8));
+    }
+
+    @org.junit.Test
+    public void test4(){
+        try {
+//            InetAddress address = InetAddress.getByName("www.baidu.com");
+//            System.out.println(address.toString());
+            byte[] data = {109, 116, 97, 108, 107, 46, 103, 111, 111, 103, 108, 101, 46, 99, 111, 109};
+            String str = new String(data, "utf-8");
+            System.out.println(str);
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 }

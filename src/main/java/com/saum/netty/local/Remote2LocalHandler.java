@@ -5,7 +5,7 @@ import io.netty.buffer.ByteBuf;
 import io.netty.buffer.ByteBufUtil;
 import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelHandlerContext;
-import io.netty.channel.SimpleChannelInboundHandler;
+import io.netty.channel.ChannelInboundHandlerAdapter;
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -13,7 +13,7 @@ import lombok.extern.slf4j.Slf4j;
  * @Description:
  */
 @Slf4j
-public class Remote2LocalHandler extends SimpleChannelInboundHandler<ByteBuf> {
+public class Remote2LocalHandler extends ChannelInboundHandlerAdapter {
     private ChannelHandlerContext channelHandlerContext;
     private Crypto crypto;
     private boolean isProxy = true;
@@ -25,10 +25,12 @@ public class Remote2LocalHandler extends SimpleChannelInboundHandler<ByteBuf> {
     }
 
     @Override
-    protected void channelRead0(ChannelHandlerContext ctx, ByteBuf msg) throws Exception {
+    public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
         if(isProxy){
-            byte[] encrypted = ByteBufUtil.getBytes(msg);
+            ByteBuf buf = (ByteBuf) msg;
+            byte[] encrypted = ByteBufUtil.getBytes(buf);
             byte[] decrypted = crypto.decrypt(encrypted);
+            log.info("本地代理接收来自远程代理的回复");
             channelHandlerContext.writeAndFlush(Unpooled.copiedBuffer(decrypted));
         }else{
             channelHandlerContext.writeAndFlush(msg);

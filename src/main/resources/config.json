@@ -2,7 +2,7 @@
   "server": "0.0.0.0",
   "server_port": 8000,
   "local": "127.0.0.1",
-  "local_port": 8020,
+  "local_port": 8090,
   "timeout": 300,
   "method": "none",
   "password": "12345678"
